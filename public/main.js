@@ -1,3 +1,4 @@
+
 const socket = io();
 
 const clientTotal = document.getElementById("clients-total");
@@ -15,14 +16,31 @@ messageForm.addEventListener("submit", (e) => {
 });
 function sendMessage() {
     if(messageInput.value === "")return;
-    console.log(messageInput.value);
-    const data = {
-        name: nameInput.value,
-        message: messageInput.value,
-        dataTime: new Date(),
-    };
-    socket.emit("message", data);
-    addMessageToUI(true,data);
+    const selectedFile = document.getElementById('document-input').files[0];
+    const data = new FormData();
+    data.append('name', nameInput.value);
+    data.append('message', messageInput.value);
+    data.append('dataTime', new Date());
+    data.append('file', selectedFile);
+    console.log("hellow ");
+    fetch('http://localhost:3000/upload', {
+        method: 'POST',
+        body: data,
+
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json(); // Assuming the server sends JSON response
+    })
+    .then(data => {
+        console.log('Response:', data);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+    addMessageToUI(true,data.message);
     messageInput.value = "";
 }
 socket.on("chatMessage", (data) => {

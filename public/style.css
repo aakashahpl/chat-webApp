@@ -119,6 +119,38 @@ body {
   background-color: #fff;
 }
 
+.document-input {
+  border: 1px solid #ccc;
+  font-size: 16px;
+  width: 100%;
+  display: flex;
+}
+
+/* Style the file input button */
+.document-input::-webkit-file-upload-button {
+  background-color: #b9b9b9;
+  color: rgb(0, 0, 0);
+  border: none;
+  cursor: pointer;
+  height:48px;
+}
+
+.document-input::-webkit-file-upload-button:hover {
+  background-color: #c0c0c0;
+}
+
+/* Hide the default file input text */
+.document-input::placeholder {
+  color: #000000;
+}
+
+/* Optional: Style the file input label */
+.document-input-label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
 .send-button {
   height: 48px;
   font-size: 16px;
