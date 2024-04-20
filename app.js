@@ -26,19 +26,28 @@ const server = app.listen(PORT, () => {
 });
 
 app.post('/upload', upload.single('file'), (req, res) => {
-    if (req.file) {
-        const filePath = `localhost:3000/${req.body.fileName}`;
-        console.log('Upload Successful', filePath); 
+    try {
 
-        const message = {
-            name: req.body.name,
-            message: req.body.message,
-            dateTime: new Date(),
-            filePath: filePath
-        };
-        io.emit("chatMessage", message);
-        res.send({ status: 'success', url: filePath });
-    } else {
+        if (req.file) {
+            const filePath = `localhost:3000/${req.body.fileName}`;
+            console.log('Upload Successful', filePath);
+            const message = {
+                name: req.body.name,
+                message: req.body.message,
+                dateTime: new Date(),
+                filePath: filePath
+            };
+            io.emit("chatMessage", message);
+            res.send({ status: 'success', url: filePath });
+        } else {
+            const message = {
+                name: req.body.name,
+                message: req.body.message,
+                dateTime: new Date(),
+            }
+            io.emit("chatMessage", message);
+        }
+    } catch (error) {
         res.status(500).send({ status: 'fail', message: 'File upload failed' });
     }
 });

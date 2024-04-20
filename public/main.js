@@ -15,43 +15,46 @@ messageForm.addEventListener("submit", (e) => {
     sendMessage();
 });
 function sendMessage() {
-    if(messageInput.value === "")return;
+    if (messageInput.value === "") return;
     const selectedFile = document.getElementById('document-input').files[0];
     const data = new FormData();
     data.append('name', nameInput.value);
     data.append('message', messageInput.value);
     data.append('dataTime', new Date());
-    data.append('file', selectedFile);
-    console.log("hellow ");
+    if (selectedFile) {
+        data.append('file', selectedFile);
+    }
+    console.log(data.get('message'));
+    // addMessageToUI(true, {message:data.get('message'),name:data.get('name')});
     fetch('http://localhost:3000/upload', {
         method: 'POST',
         body: data,
 
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json(); // Assuming the server sends JSON response
-    })
-    .then(data => {
-        console.log('Response:', data);
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-    addMessageToUI(true,data.message);
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json(); // Assuming the server sends JSON response
+        })
+        .then(data => {
+            console.log('Response:', data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
     messageInput.value = "";
 }
 socket.on("chatMessage", (data) => {
     console.log(data);
-    addMessageToUI(false,data);
+    addMessageToUI(false, data);
 });
-function addMessageToUI(isOwnMessage,data) {
+function addMessageToUI(isOwnMessage, data) {
     const element = `
-        <li class="${isOwnMessage?"message-right":"message-left"}">
+        <li class="${isOwnMessage ? "message-right" : "message-left"}">
           <p class="message">
             ${data.message}
+            <a href="${data.filePath? data.filePath : '#'}">${data.filePath? data.filePath : ''}</a>
             <span>${data.name}</span>
           </p>
         </li>
@@ -59,6 +62,6 @@ function addMessageToUI(isOwnMessage,data) {
     messageContainer.innerHTML += element;
     scrollToBottom();
 }
-function scrollToBottom(){
-    messageContainer.scroll(0,messageContainer.scrollHeight);
+function scrollToBottom() {
+    messageContainer.scroll(0, messageContainer.scrollHeight);
 }
